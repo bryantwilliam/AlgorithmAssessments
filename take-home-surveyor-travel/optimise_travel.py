@@ -24,10 +24,10 @@ def sorted_indices(coordinates, starting_index):
     indices = list(range(len(coordinates)))
     sorted_indices = []
     while True:
-        indices.sort(key=lambda index : calc_distance(coordinates[starting_index], coordinates[index]))
-        sorted_indices += indices[:2]
-        indices = indices[2 - len(indices):]
-        starting_index = sorted_indices[-1]
+        indices.sort(key=lambda index : calc_distance(coordinates[starting_index], coordinates[index])) # sort coordinates by it's distance to starting_index
+        sorted_indices += indices[:2] # add first 2 indices
+        indices = indices[2 - len(indices):] # remove first 2 indices
+        starting_index = sorted_indices[-1] # set to last index in sorted_indices
         if (len(sorted_indices) == len(coordinates)):
             break
     return sorted_indices
