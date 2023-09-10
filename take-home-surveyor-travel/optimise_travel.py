@@ -19,7 +19,7 @@ def calc_distance(coordinate1, coordinate2):
     dy = coordinate2[1] - coordinate1[1]
     return math.sqrt(dx*dx + dy*dy)
 
-def sort_indices(coordinates, starting_index): # TODO Still not optimal
+def sort_indices(coordinates, starting_index): # TODO Still not optimal, I could try a different method using heuristics.
     indices = list(range(len(coordinates)))
     sorted_indices = []
     while True:
