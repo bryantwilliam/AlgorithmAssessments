@@ -19,7 +19,7 @@ def calc_distance(coordinate1, coordinate2):
     dy = coordinate2[1] - coordinate1[1]
     return math.sqrt(dx*dx + dy*dy)
 
-def sorted_indices(coordinates, starting_index):
+def sort_indices(coordinates, starting_index):
     # TODO Still not optimal
     indices = list(range(len(coordinates)))
     sorted_indices = []
@@ -36,34 +36,29 @@ def sorted_indices(coordinates, starting_index):
 def optimise_travel_order(coordinates):
     coordinates_xy = convert_to_utm_xy(coordinates)
     indices = list(range(len(coordinates_xy)))
-    optimal_start_index = 0
 
     ############ DEBUG ############
     print("####### BEFORE #######")
-    print("Index starting at: ", optimal_start_index)
-    debug(indices, coordinates, coordinates_xy, optimal_start_index)
+    debug(indices, coordinates, coordinates_xy)
     ###############################
 
-
+    sorted_indices = []
     smallest_distance = -1
-    for index in indices: # Tries every index for the best starting index to sort the list by.
-        dist = calc_total_distance(coordinates_xy, sorted_indices(coordinates, index))
+    for index in indices: # Tries every index for the best starting index to sort the list of indices by.
+        sorted_indices = sort_indices(coordinates, index)
+        dist = calc_total_distance(coordinates_xy, sorted_indices)
         if dist > smallest_distance:
             smallest_distance = dist
-            optimal_start_index = index
-
-    optimal_order_indices = sorted_indices(coordinates, optimal_start_index)
 
     ############ DEBUG ############
     print("####### AFTER #######")
-    print("Optimal start index: ", optimal_start_index)
-    debug(optimal_order_indices, coordinates, coordinates_xy, optimal_start_index)    
+    debug(sorted_indices, coordinates, coordinates_xy)    
     ###############################  
         
-    return optimal_order_indices
+    return sorted_indices
 
-def debug(indices, coordinates, coordinates_xy, optimal_start_index):
+def debug(indices, coordinates, coordinates_xy):
     for index in indices:
         print("Index: ", index)
         print("Coordinates: ", coordinates[index])
-    print("Total distance: ", calc_total_distance(coordinates_xy, sorted_indices(coordinates, optimal_start_index)))
+    print("Total distance: ", calc_total_distance(coordinates_xy, indices))
