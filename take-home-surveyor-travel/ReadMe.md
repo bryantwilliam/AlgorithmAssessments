@@ -15,7 +15,7 @@ one minute on a normal laptop with a reasonably good solution.
 
 ### Setup
 Make sure you are setup with a fairly recent version of Python.
-
+,
 Install the required dependencies : `pip install -r requirements.txt`
 
 ### Run unit tests

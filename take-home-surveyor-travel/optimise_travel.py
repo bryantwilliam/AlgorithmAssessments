@@ -19,45 +19,42 @@ def calc_distance(coordinate1, coordinate2):
     dy = coordinate2[1] - coordinate1[1]
     return math.sqrt(dx*dx + dy*dy)
 
-def sort_indices(coordinates, starting_index): # TODO Still not optimal, I could try a different method using heuristics.
-    indices = list(range(len(coordinates)))
-    sorted_indices = []
-    while True:
-        indices.sort(key=lambda index : calc_distance(coordinates[starting_index], coordinates[index])) # sort coordinates by it's distance to starting_index
-        sorted_indices += indices[:2] # add first 2 indices
-        indices = indices[2 - len(indices):] # remove first 2 indices
-        starting_index = sorted_indices[-1] # set to last index in sorted_indices
-        if (len(sorted_indices) == len(coordinates)):
-            break
-    return sorted_indices
+def nearest_neighbor_sort(coordinates, starting_index):
+    n = len(coordinates)
+    visited = [False] * n
+    sorted_indices = [starting_index]
+    visited[starting_index] = True
 
+    while len(sorted_indices) < n:
+        current_index = sorted_indices[-1]
+        min_distance = float('inf')
+        next_index = None
+
+        for i in range(n):
+            if not visited[i]:
+                distance = calc_distance(coordinates[current_index], coordinates[i])
+                if distance < min_distance:
+                    min_distance = distance
+                    next_index = i
+
+        if next_index is not None:
+            sorted_indices.append(next_index)
+            visited[next_index] = True
+
+    return sorted_indices
 
 def optimise_travel_order(coordinates):
     coordinates_xy = convert_to_utm_xy(coordinates)
     indices = list(range(len(coordinates_xy)))
+    
+    smallest_distance = float('inf')
+    best_sorted_indices = None
 
-    ############ DEBUG ############
-    print("####### BEFORE #######")
-    debug(indices, coordinates, coordinates_xy)
-    ###############################
-
-    sorted_indices = []
-    smallest_distance = -1
-    for index in indices: # Tries every index for the best starting index to sort the list of indices by.
-        sorted_indices = sort_indices(coordinates, index)
-        dist = calc_total_distance(coordinates_xy, sorted_indices)
-        if dist > smallest_distance:
-            smallest_distance = dist
-
-    ############ DEBUG ############
-    print("####### AFTER #######")
-    debug(sorted_indices, coordinates, coordinates_xy)    
-    ###############################  
-        
-    return sorted_indices
-
-def debug(indices, coordinates, coordinates_xy):
     for index in indices:
-        print("Index: ", index)
-        print("Coordinates: ", coordinates[index])
-    print("Total distance: ", calc_total_distance(coordinates_xy, indices))
+        sorted_indices = nearest_neighbor_sort(coordinates_xy, index)
+        dist = calc_total_distance(coordinates_xy, sorted_indices)
+        if dist < smallest_distance:
+            smallest_distance = dist
+            best_sorted_indices = sorted_indices
+
+    return best_sorted_indices
